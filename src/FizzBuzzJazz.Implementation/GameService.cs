@@ -10,10 +10,11 @@ namespace FizzBuzzJazz.Implementation
     {
         private readonly Func<RuleKey, IRule> _ruleAccessor;
         private readonly IList<IRule> _rules = new List<IRule>();
-
-        public GameService(Func<RuleKey, IRule> ruleAccessor)
+        private readonly DirectionGenerator _directionGenerator;
+        public GameService(Func<RuleKey, IRule> ruleAccessor, DirectionGenerator directionGenerator)
         {
             _ruleAccessor = ruleAccessor;
+            _directionGenerator = directionGenerator;
         }
 
         public void LoadRules(params RuleKey[] keys)
@@ -27,9 +28,9 @@ namespace FizzBuzzJazz.Implementation
             _rules.Clear();
         }
 
-        public IEnumerable<string> GetResults(int from, int to, Direction direction = Direction.Forwards)
+        public IEnumerable<string> GetResults(int from, int to)
         {
-            for (int i = from; ValidateIterator(to, i, direction); AppendToIterator(ref i, direction))
+            foreach (int i in _directionGenerator.GetRange(from, to))
             {
                 string output = _rules
                     .Where(rule => rule.IsValid(i))
@@ -40,20 +41,6 @@ namespace FizzBuzzJazz.Implementation
 
                 yield return output;
             }
-        }
-
-        private static bool ValidateIterator(int to, int i, Direction direction)
-        {
-            return direction == Direction.Forwards ? 
-                i <= to :
-                i >= to;
-        }
-
-        private static int AppendToIterator(ref int i, Direction direction)
-        {
-            return direction == Direction.Forwards ? 
-                i++ : 
-                i--;
         }
     }
 }

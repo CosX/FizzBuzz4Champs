@@ -20,18 +20,12 @@ namespace FizzBuzzJazz.Implementation.Tests
                 {
                     case RuleKey.Fizz:
                         return new FizzRule();
-                    case RuleKey.Buzz:
-                        return new BuzzRule();
-                    case RuleKey.Jazz:
-                        return new JazzRule();
-                    case RuleKey.Fuzz:
-                        return new FuzzRule();
                     default:
                         throw new KeyNotFoundException();
                 }
             }
 
-            _sut = new GameService(MockFunc);
+            _sut = new GameService(MockFunc, new DirectionGenerator());
         }
 
         [Fact]
@@ -46,10 +40,36 @@ namespace FizzBuzzJazz.Implementation.Tests
         [Fact]
         public void GameService_CountsBackwards()
         {
-            IEnumerable<string> results = _sut.GetResults(2, 1, Direction.Backwards).ToList();
+            IEnumerable<string> results = _sut.GetResults(2, 1).ToList();
 
             Assert.Equal("2", results.ElementAtOrDefault(0));
             Assert.Equal("1", results.ElementAtOrDefault(1));
+        }
+
+        [Fact]
+        public void GameService_RulePrintsFizz()
+        {
+            _sut.LoadRules(RuleKey.Fizz);
+
+            IEnumerable<string> results = _sut.GetResults(3, 5).ToList();
+
+            _sut.DisposeRules();
+
+            Assert.Equal("Fizz", results.FirstOrDefault());
+            Assert.Equal(3, results.Count());
+        }
+
+        [Fact]
+        public void GameService_RulePrintsFizzReverse()
+        {
+            _sut.LoadRules(RuleKey.Fizz);
+
+            IEnumerable<string> results = _sut.GetResults(5, 3).ToList();
+
+            _sut.DisposeRules();
+
+            Assert.Equal("Fizz", results.LastOrDefault());
+            Assert.Equal(3, results.Count());
         }
     }
 }

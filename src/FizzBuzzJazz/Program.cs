@@ -37,6 +37,7 @@ namespace FizzBuzzJazz.Console
                     });
                 })
                 .AddTransient<IGameService, GameService>()
+                .AddTransient<DirectionGenerator>()
                 .BuildServiceProvider();
 
             IGameService engine = serviceProvider.GetService<IGameService>();
@@ -52,7 +53,7 @@ namespace FizzBuzzJazz.Console
 
             engine.LoadRules(RuleKey.Jazz, RuleKey.Fuzz);
 
-            foreach (string result in engine.GetResults(100, 1, Direction.Backwards))
+            foreach (string result in engine.GetResults(100, 1))
                 System.Console.WriteLine(result);
 
             engine.DisposeRules();
