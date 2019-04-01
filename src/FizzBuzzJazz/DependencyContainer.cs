@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FizzBuzzJazz.Implementation;
 using FizzBuzzJazz.Implementation.Rules;
 using FizzBuzzJazz.Models.Enums;
@@ -13,29 +14,14 @@ namespace FizzBuzzJazz.Console
         public static ServiceProvider BuildServiceProvider()
         {
             return new ServiceCollection()
-                .AddTransient<FizzRule>()
-                .AddTransient<BuzzRule>()
-                .AddTransient<JazzRule>()
-                .AddTransient<FuzzRule>()
-                .AddTransient(factory =>
-                {
-                    return (Func<RuleKey, IRule>)(key =>
-                    {
-                        switch (key)
-                        {
-                            case RuleKey.Fizz:
-                                return factory.GetService<FizzRule>();
-                            case RuleKey.Buzz:
-                                return factory.GetService<BuzzRule>();
-                            case RuleKey.Jazz:
-                                return factory.GetService<JazzRule>();
-                            case RuleKey.Fuzz:
-                                return factory.GetService<FuzzRule>();
-                            default:
-                                throw new KeyNotFoundException();
-                        }
-                    });
-                })
+                .AddTransient<IRule, FizzRule>()
+                .AddTransient<IRule, BuzzRule>()
+                .AddTransient<IRule, JazzRule>()
+                .AddTransient<IRule, FuzzRule>()
+                .AddTransient(
+                    factory => (Func<RuleKey, IRule>)
+                        (key => factory.GetServices<IRule>().FirstOrDefault(m => m.Key == key)
+                    ))
                 .AddTransient<IGameService, GameService>()
                 .AddTransient<DirectionGenerator>()
                 .BuildServiceProvider();

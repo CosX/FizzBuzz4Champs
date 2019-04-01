@@ -5,10 +5,8 @@ namespace FizzBuzzJazz.Implementation.Rules
 {
     public class FizzRule : IRule
     {
+        public RuleKey Key => RuleKey.Fizz;
         public string Output => "Fizz";
-        public bool IsValid(int input)
-        {
-            return input % 3 == 0;
-        }
+        public bool IsValid(int input) => input % 3 == 0;
     }
 }
