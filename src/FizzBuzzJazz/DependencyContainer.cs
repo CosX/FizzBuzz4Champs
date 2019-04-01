@@ -20,8 +20,8 @@ namespace FizzBuzzJazz.Console
                 .AddTransient<IRule, FuzzRule>()
                 .AddTransient(
                     factory => (Func<RuleKey, IRule>)
-                        (key => factory.GetServices<IRule>().FirstOrDefault(m => m.Key == key)
-                    ))
+                        (key => factory.GetServices<IRule>().FirstOrDefault(m => m.Key == key))
+                    )
                 .AddTransient<IGameService, GameService>()
                 .AddTransient<DirectionGenerator>()
                 .BuildServiceProvider();
