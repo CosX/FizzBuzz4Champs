@@ -1,34 +1,17 @@
-﻿using FizzBuzzJazz.Models.Enums;
-using FizzBuzzJazz.Models.Interfaces;
+﻿using FizzBuzzJazz;
+using FizzBuzzJazz.Rules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FizzBuzzJazz.Console
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            ServiceProvider serviceProvider = DependencyContainer.BuildServiceProvider();
+var serviceProvider = new ServiceCollection()
+    .AddTransient<IRule, FizzRule>()
+    .AddTransient<IRule, BuzzRule>()
+    .AddTransient<IRule, JazzRule>()
+    .AddTransient<IRule, FuzzRule>()
+    .AddTransient<Game>()
+    .BuildServiceProvider();;
 
-            IGameService engine = serviceProvider.GetService<IGameService>();
+var engine = serviceProvider.GetService<Game>();
+foreach (var result in engine!.GetResults(1, 100))
+    System.Console.WriteLine(result);
 
-            engine.LoadRules(RuleKey.Fizz, RuleKey.Buzz);
-
-            foreach (string result in engine.GetResults(1, 100))
-                System.Console.WriteLine(result);
-
-            engine.DisposeRules();
-
-            System.Console.ReadKey();
-
-            engine.LoadRules(RuleKey.Jazz, RuleKey.Fuzz);
-
-            foreach (string result in engine.GetResults(100, 1))
-                System.Console.WriteLine(result);
-
-            engine.DisposeRules();
-
-            System.Console.ReadKey();
-        }
-    }
-}
+System.Console.ReadKey();
