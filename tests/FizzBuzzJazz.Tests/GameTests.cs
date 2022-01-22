@@ -11,8 +11,16 @@ public class GameTests
 
     public GameTests()
     {
+        IRule MockFunc(RuleKey key)
+        {
+            return key switch
+            {
+                RuleKey.Fizz => new FizzRule(),
+                _ => throw new KeyNotFoundException()
+            };
+        }
 
-        _sut = new Game(new []{ new FizzRule() });
+        _sut = new Game(MockFunc);
     }
 
     [Fact]
@@ -27,6 +35,7 @@ public class GameTests
     [Fact]
     public void Game_RulePrintsFizz()
     {
+        _sut.LoadRules(RuleKey.Fizz);
         IEnumerable<string> results = _sut.GetResults(3, 5).ToList();
         Assert.Equal("Fizz", results.FirstOrDefault());
         Assert.Equal(3, results.Count());
